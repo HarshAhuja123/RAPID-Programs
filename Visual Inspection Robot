@@ -1,0 +1,129 @@
+! Visual Inspection station code, coordinated with 2 other robots that perform pick and place operations into visual inspection stations
+! the following is the RAPID code for the Visual Inspection Robot in the middle. 
+MODULE Module1
+    CONST robtarget Target_10:=[[-11.390812013,2058.880838995,1480.089155659],[0.007454745,0.007454746,0.707067484,0.707067484],[1,0,0,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_30:=[[-999.106091506,1766.331726286,1480.089050635],[0.189213043,0.189213121,-0.681321054,-0.681321099],[1,1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_10_6:=[[-97.556270811,-2026.97451885,1480.089155659],[0.707067484,0.707067484,-0.007454746,-0.007454745],[-2,1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20:=[[-1155.387393499,-1668.298750318,1480.089050635],[0.677711527,0.677711529,-0.201759923,-0.201760012],[-2,1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    !***********************************************************
+    !
+    ! Module:  Module1
+    !
+    ! Description:
+    !   <Insert description here>
+    !
+    ! Author: meetu
+    !
+    ! Version: 1.0
+    !
+    !***********************************************************
+    
+    
+    !***********************************************************
+    !
+    ! Procedure main
+    !
+    !   This is the entry point of your program
+    !
+    
+    !***********************************************************
+    PROC main()
+        VAR num edone:=0;
+        VAR num sdone:=0;
+        ! these monitor the inspection status of whatever is kept inside the fixture
+        ! VIS and VIE are sensor outputs
+        ! VIS or VIE reflect the status of the sensors at the turntables. if they ar v
+        SetDO R3epick,0;
+        SetDO R3spick,0;
+        ! the separator pick instruction should be the entry point, so it is being set to 1 from the get-go. 
+        SetDO TSpick,1;
+        SetDO TEpick,1;
+        ! these four signals are to inform different robots of the activities they have to execute. they are all set one from this side
+        ! these variables track the status of the inspection tasks
+        WHILE TRUE DO
+            ! signal resets in response to the handshake from ACLT1 and ACLT2
+            IF T1edone=1 THEN
+                SetDO TEpick,0;
+            ENDIF
+            IF T1sdone=1 THEN
+                SetDO TSpick,0;
+            ENDIF
+            IF R3epdone=1 THEN
+                SetDO R3epick,0;
+            ENDIF
+            IF R3spdone=1 THEN
+                SetDO R3spick,0;
+            ENDIF
+            ! Robot only starts inspection when the sensor area is occupied by a component, and the completion status of an activity is 0;
+            IF VIS=1 AND sdone=0 THEN
+                sepinspect;
+                sdone:=1;
+                SetDO R3spick,1;
+            ENDIF
+            ! an extra whichone signal is created so the ACLT2 robot knows which electrode it is picking, to put it on the right conveyor.
+            IF VIE=1 AND edone=0 THEN
+                ElectrodeInspect;
+                edone:=1;
+                WaitTime 0.1;
+                SetDO R3epick,1;
+                WaitTime 0.1;
+                SetDO which,whichone;
+            ENDIF
+            ! if the sensor area is finally clear (i.e. the inspection site is empty) the robot will reset its signal and request a new part to be loaded in by ACLT1 
+            IF VIS=0 THEN
+                sdone:=0;
+                MoveJ Target_20,v1000,fine,tool0\WObj:=wobj0;
+                WaitTime 0.1;
+                SetDO TSpick,1;
+                continue;
+            ENDIF
+            IF VIE=0 THEN
+                edone:=0;
+                MoveJ Target_30,v1000,fine,tool0\WObj:=wobj0;
+                WaitTime 0.1;
+                SetDO TEpick,1;
+                continue;
+            ENDIF
+            !note that in the Station logic, the AND gate connecting the VIE, VIS signals and 
+                ! only when the sensor area is clear AND the visinspect robot is in the right location, will the Pick and place track robot react. these signals interface through some simple logic with picksep, pickan and pickath on the ACLT1 robot's side
+            ! these last two statements reset the signals whenever the relevant sensors are once more unoccupied, and NEVER else. 
+        ENDWHILE
+    ENDPROC
+    PROC sepinspect()
+        MoveJ Target_10,v1000,fine,tool0\WObj:=wobj0;
+        WaitTime 0.5;
+        PulseDO rotateS1;
+        WaitTime 2;
+        PulseDO rotateS2;
+        WaitTime 0.5;
+        PulseDO rotateS1;
+        WaitTime 0.5;
+        MoveJ Target_30,v1000,fine,tool0\WObj:=wobj0;
+    ENDPROC
+    PROC ElectrodeInspect()
+        MoveJ Target_10_6,v1000,fine,tool0\WObj:=wobj0;
+        WaitTime 0.5;
+        IF whichone=1 THEN ! Anode
+            PulseDO rotateA1;
+            WaitTime 2;
+            PulseDO rotateA2;
+            WaitTime 0.5;
+            PulseDO rotateA1;
+            WaitTime 0.5;
+        ENDIF
+        IF whichone=0 THEN 
+            PulseDO rotateC1;
+            WaitTime 2;
+            PulseDO rotateC2;
+            WaitTime 0.5;
+            PulseDO rotateC1;
+            WaitTime 0.5;! Cathode rotation
+        ENDIF
+        
+        MoveJ Target_20,v1000,fine,tool0\WObj:=wobj0;
+    ENDPROC
+    PROC Path_10()
+        MoveJ Target_30,v1000,fine,tool0\WObj:=wobj0;
+        MoveJ Target_20,v1000,fine,tool0\WObj:=wobj0;
+    ENDPROC
+ENDMODULE
