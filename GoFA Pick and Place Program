@@ -1,0 +1,1186 @@
+! This program was another experiment in iterating across targets. After learning the object structure of robot targets in RAPID, 
+! I essentially created 8 iterables for 8 pallets, used 4 template points at the corner of one pallet, and translated them by a certain amount based on the arrangement 
+! and geometry of each pallet. This program also has signal commands for a LinearMover smart component in RobotStudio Station logic, as the station managed
+! two trays of the same type of components which would be exchanged when one tray was exhausted. This program did not face many configuration issues, as most targets were comfortably
+! within the robotic work envelope, and were a safe distance away from the edges of it's dextrous region to prevent problematic configuration reversals. 
+
+MODULE Module1
+    CONST robtarget Home:=[[1326.379951193,-60.744304613,306.76242246],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet1:=[[1323.15350694,-210.82702527,137.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet2:=[[1323.15350694,-29.514072999,137.028292252],[0,0,1,0],[-1,-1,-1,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet3:=[[1484.296065261,-29.514072999,137.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet4:=[[1484.296065261,-211.242731742,137.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_10:=[[1106.297476912,-208.712670826,172.843804882],[0,-0.707106781,0.707106781,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20:=[[723.412595846,935.141937069,218.593524498],[0,-0.707106781,0.707106781,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20_2:=[[663.49665337,935.141937069,218.593524498],[0,-0.707106781,0.707106781,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    VAR robtarget p1{4}:=[pallet1,pallet2,pallet3,pallet4];
+    VAR robtarget p2{4};
+    VAR robtarget p3{4};
+    VAR robtarget p4{4};
+    VAR robtarget p5{4};
+    VAR robtarget p6{4};
+    VAR robtarget p7{4};
+    VAR robtarget p8{4};
+    
+    CONST robtarget pallet2_2:=[[1119.014745607,-631.584609498,172.843804882],[0,0,1,0],[-1,2,1,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet1_2:=[[1323.15350694,61.17297473,137.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet1_2_2:=[[1323.15350694,61.17297473,287.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet2_3:=[[1323.15350694,242.485927001,137.028292252],[0,0,1,0],[-1,-1,-1,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet2_3_2:=[[1323.15350694,242.485927001,287.028292252],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet3_2:=[[1484.296065261,242.485927001,137.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet3_2_2:=[[1484.296065261,242.485927001,287.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet4_2:=[[1484.296065261,60.757268258,137.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget pallet4_2_2:=[[1484.296065261,60.757268258,287.028292252],[0,0,1,0],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    
+    !***********************************************************
+    !
+    ! Module:  Module1
+    !
+    ! Description:
+    !   <Insert description here>
+    !
+    ! Author: meetu
+    !
+    ! Version: 1.0
+    !
+    !***********************************************************
+    
+    
+    !***********************************************************
+    !
+    ! Procedure main
+    !
+    !   This is the entry point of your program
+    !
+    !***********************************************************
+    PROC PnPpath()
+    ENDPROC
+    PROC generatezoffs()
+        VAR robtarget temp;
+        FOR i FROM 1 TO 4 DO
+            temp:=p1{i};
+            temp.trans.x:=temp.trans.x-272;
+            temp.trans.z:=temp.trans.z+331;
+            p2{i}:=temp;
+        ENDFOR
+        FOR i FROM 1 TO 4 DO
+            temp:=p2{i};
+            temp.trans.y:=temp.trans.y+211;
+            temp.trans.z:=temp.trans.z+331;
+            p3{i}:=temp;
+            temp:=p3{i};
+            temp.trans.y:=temp.trans.y+211;
+            temp.trans.z:=temp.trans.z+331;
+            p4{i}:=temp;
+            temp:=p4{i};
+            temp.trans.y:=temp.trans.y+211;
+            temp.trans.z:=temp.trans.z+331;
+            p5{i}:=temp;
+            
+            temp:=p5{i};
+            temp.trans.x:=temp.trans.x+272;
+            temp.trans.z:=temp.trans.z+331;
+            p6{i}:=temp;
+            
+            temp:=p6{i};
+            temp.trans.y:=temp.trans.y-211;
+            temp.trans.z:=temp.trans.z+331;
+            p7{i}:=temp;
+            
+            temp:=p7{i};
+            temp.trans.y:=temp.trans.y-211;
+            temp.trans.z:=temp.trans.z+331;
+            p8{i}:=temp;
+        ENDFOR
+    ENDPROC
+    PROC generatearrays()
+        VAR robtarget temp;
+        FOR i FROM 1 TO 4 DO
+            temp:=p1{i};
+            temp.trans.y:=temp.trans.y+272;
+            p2{i}:=temp;
+        ENDFOR
+        FOR i FROM 1 TO 4 DO
+            temp:=p2{i};
+            temp.trans.x:=temp.trans.x+211;
+            p3{i}:=temp;
+            temp:=p3{i};
+            temp.trans.x:=temp.trans.x+211;
+            p4{i}:=temp;
+            temp:=p4{i};
+            temp.trans.x:=temp.trans.x+211;
+            p5{i}:=temp;
+            
+            temp:=p5{i};
+            temp.trans.y:=temp.trans.y-272;
+            p6{i}:=temp;
+            
+            temp:=p6{i};
+            temp.trans.x:=temp.trans.x-211;
+            p7{i}:=temp;
+            
+            temp:=p7{i};
+            temp.trans.x:=temp.trans.x-211;
+            p8{i}:=temp;
+        ENDFOR
+        FOR i FROM 1 TO 4 DO
+            p2{i}.robconf:=p1{i}.robconf;
+            p3{i}.robconf:=p1{i}.robconf;
+            p4{i}.robconf:=p1{i}.robconf;
+            p5{i}.robconf:=p1{i}.robconf;
+            p6{i}.robconf:=p1{i}.robconf;
+            p7{i}.robconf:=p1{i}.robconf;
+            p8{i}.robconf:=p1{i}.robconf;
+        ENDFOR
+    ENDPROC
+    !8,1
+    !3,2
+    !5,4
+    !6,7
+    PROC Tes()
+        generatearrays;
+        FOR i FROM 1 TO 4 DO
+            MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+        ENDFOR
+        FOR i FROM 1 TO 4 DO
+            p1{i}.trans.z:=p1{i}.trans.z+300;
+            MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p2{i}.trans.z:=p2{i}.trans.z+300;
+            MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p3{i}.trans.z:=p3{i}.trans.z+300;
+            MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p4{i}.trans.z:=p4{i}.trans.z+300;
+            MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p5{i}.trans.z:=p5{i}.trans.z+300;
+            MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p6{i}.trans.z:=p6{i}.trans.z+300;
+            MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p7{i}.trans.z:=p7{i}.trans.z+300;
+            MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p8{i}.trans.z:=p8{i}.trans.z+300;
+            MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+        ENDFOR
+        
+        
+        !MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC main()
+        VAR robtarget secpick;
+        VAR robtarget a;
+        generatearrays;
+        WaitTime 0.1;
+        SetDO Pick1,0;
+        WaitTime 0.1;
+        SetDO pick2,0;
+        WaitTime 0.1;
+        SetDO pick3,0;
+        WaitTime 0.1;
+        SetDO pick4,0;
+        WaitTime 0.1;
+        WaitTime 0.1;
+        SetDO exchange,1;
+        WaitTime 0.1;
+        SetDO exchange,0;
+        WaitTime 0.1;
+        ! 8,1
+        ! The following FOR loops iterate across a grid of 8 pallets arranged in 2 rows
+        !4 targets are created on one pallet, then offset in the x and y directions dynamically by accessing the object definitions of each target
+        FOR i FROM 1 TO 4 DO
+            IF i=1 THEN
+                 
+                a:=target_20;
+                a.robconf:=target_20.robconf;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick1,1;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick1,0;
+                WaitTime 0.2;
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.robconf:=target_20.robconf;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick2,1;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                WaitTime 0.2;
+                secpick:=p1{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.robconf:=p1{i}.robconf;
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick2,0;
+                WaitTime 0.2;
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick3,1;
+                WaitTime 0.2;
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick3,0;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p8{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.robconf:=p8{i}.robconf;
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick4,1;
+                WaitTime 0.2;
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick4,0;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+            ELSE
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                WaitTime 0.2;
+                secpick:=p1{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                 
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p8{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+            ENDIF
+        ENDFOR
+        
+        FOR i FROM 1 TO 4 DO
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+              
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p2{i}.trans.z:=p2{i}.trans.z+150;
+                MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p2{i}.trans.z:=p2{i}.trans.z-150;
+                MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                p2{i}.trans.z:=p2{i}.trans.z+150;
+                MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p2{i}.trans.z:=p2{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+               
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                WaitTime 0.2;
+                secpick:=p2{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p3{i}.trans.z:=p3{i}.trans.z+150;
+                MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p3{i}.trans.z:=p3{i}.trans.z-150;
+                MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p3{i}.trans.z:=p3{i}.trans.z+150;
+                MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p3{i}.trans.z:=p3{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p3{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+        ENDFOR
+        ! 5,4
+        FOR i FROM 1 TO 4 DO
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p4{i}.trans.z:=p4{i}.trans.z+150;
+                MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p4{i}.trans.z:=p4{i}.trans.z-150;
+                MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                p4{i}.trans.z:=p4{i}.trans.z+150;
+                MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p4{i}.trans.z:=p4{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+               
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                WaitTime 0.2;
+                secpick:=p4{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p5{i}.trans.z:=p5{i}.trans.z+150;
+                MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p5{i}.trans.z:=p5{i}.trans.z-150;
+                MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p5{i}.trans.z:=p5{i}.trans.z+150;
+                MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p5{i}.trans.z:=p5{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p5{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+        ENDFOR
+       
+        ! 6,7
+        FOR i FROM 1 TO 4 DO
+             
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+              
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p7{i}.trans.z:=p7{i}.trans.z+150;
+                MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p7{i}.trans.z:=p7{i}.trans.z-150;
+                MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                p7{i}.trans.z:=p7{i}.trans.z+150;
+                MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p7{i}.trans.z:=p7{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+               
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                WaitTime 0.2;
+                secpick:=p7{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p6{i}.trans.z:=p6{i}.trans.z+150;
+                MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p6{i}.trans.z:=p6{i}.trans.z-150;
+                MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p6{i}.trans.z:=p6{i}.trans.z+150;
+                MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p6{i}.trans.z:=p5{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p6{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+        ENDFOR
+        WaitTime 1;
+        SetDO exchange,1;
+        WaitTime 1;
+        FOR i FROM 1 TO 4 DO
+            p1{i}.trans.z:=p1{i}.trans.z+300;
+            MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p2{i}.trans.z:=p2{i}.trans.z+300;
+            MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p3{i}.trans.z:=p3{i}.trans.z+300;
+            MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p4{i}.trans.z:=p4{i}.trans.z+300;
+            MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p5{i}.trans.z:=p5{i}.trans.z+300;
+            MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p6{i}.trans.z:=p6{i}.trans.z+300;
+            MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p7{i}.trans.z:=p7{i}.trans.z+300;
+            MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+            p8{i}.trans.z:=p8{i}.trans.z+300;
+            MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+        ENDFOR
+        FOR i FROM 1 TO 4 DO
+            IF i=1 THEN
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick1,1;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick1,0;
+                WaitTime 0.2;
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick2,1;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                WaitTime 0.2;
+                secpick:=p1{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                 
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick2,0;
+                WaitTime 0.2;
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick3,1;
+                WaitTime 0.2;
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick3,0;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p8{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO pick4,1;
+                WaitTime 0.2;
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                WaitTime 0.2;
+                SetDO Pick4,0;
+                WaitTime 0.2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+            ELSE
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p1{i}.trans.z:=p1{i}.trans.z+150;
+                MoveJ p1{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p1{i}.trans.z:=p1{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                WaitTime 0.2;
+                secpick:=p1{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                 
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p8{i}.trans.z:=p8{i}.trans.z+150;
+                MoveJ p8{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p8{i}.trans.z:=p8{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p8{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+            ENDIF
+        ENDFOR
+        
+        FOR i FROM 1 TO 4 DO
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+              
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p2{i}.trans.z:=p2{i}.trans.z+150;
+                MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p2{i}.trans.z:=p2{i}.trans.z-150;
+                MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                p2{i}.trans.z:=p2{i}.trans.z+150;
+                MoveJ p2{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p2{i}.trans.z:=p2{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+               
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                WaitTime 0.2;
+                secpick:=p2{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p3{i}.trans.z:=p3{i}.trans.z+150;
+                MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p3{i}.trans.z:=p3{i}.trans.z-150;
+                MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p3{i}.trans.z:=p3{i}.trans.z+150;
+                MoveJ p3{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p3{i}.trans.z:=p3{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p3{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+        ENDFOR
+        ! 5,4
+        FOR i FROM 1 TO 4 DO
+                 
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p4{i}.trans.z:=p4{i}.trans.z+150;
+                MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p4{i}.trans.z:=p4{i}.trans.z-150;
+                MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                p4{i}.trans.z:=p4{i}.trans.z+150;
+                MoveJ p4{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p4{i}.trans.z:=p4{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+               
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                WaitTime 0.2;
+                secpick:=p4{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p5{i}.trans.z:=p5{i}.trans.z+150;
+                MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p5{i}.trans.z:=p5{i}.trans.z-150;
+                MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p5{i}.trans.z:=p5{i}.trans.z+150;
+                MoveJ p5{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p5{i}.trans.z:=p5{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p5{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+        ENDFOR
+       
+        ! 6,7
+        FOR i FROM 1 TO 4 DO
+            MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+            MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                a:=target_20;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+              
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                p7{i}.trans.z:=p7{i}.trans.z+150;
+                MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p7{i}.trans.z:=p7{i}.trans.z-150;
+                MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+             
+                p7{i}.trans.z:=p7{i}.trans.z+150;
+                MoveJ p7{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p7{i}.trans.z:=p7{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+               
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                WaitTime 0.2;
+                secpick:=p7{i};
+                IF i=1 OR i=4 THEN
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                p6{i}.trans.z:=p6{i}.trans.z+150;
+                MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p6{i}.trans.z:=p6{i}.trans.z-150;
+                MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                p6{i}.trans.z:=p6{i}.trans.z+150;
+                MoveJ p6{i},v1000,fine,Tooldata_1\WObj:=wobj0;
+                p6{i}.trans.z:=p5{i}.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                 
+                secpick:=p6{i};
+                IF i=1 OR i=4 THEN            
+                    secpick.trans.y:=secpick.trans.y+60;
+                ELSE
+                    secpick.trans.y:=secpick.trans.y-60;
+                ENDIF
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                
+                secpick.trans.z:=secpick.trans.z+150;
+                MoveJ secpick,v1000,fine,Tooldata_1\WObj:=wobj0;
+                secpick.trans.z:=secpick.trans.z-150;
+                 
+                a:=target_20_2;
+                a.trans.z:=a.trans.z+150;
+                MoveJ a,v1000,fine,Tooldata_1\WObj:=wobj0;
+                a.trans.z:=a.trans.z-150;
+                
+                a.trans.z:=a.trans.z+150;
+                a.trans.z:=a.trans.z-150;
+        ENDFOR
+        
+        
+        
+        
+    ENDPROC
+    PROC Path_10()
+        MoveL pallet1,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL pallet2,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL pallet3,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL pallet4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_10,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_20,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_20_2,v1000,z100,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_20()
+    ENDPROC
+ENDMODULE

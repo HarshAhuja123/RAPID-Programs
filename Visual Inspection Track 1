@@ -1,0 +1,163 @@
+! the following program is the first track robot responsible for transporting Anodes, Cathodes and Separator plate to inspection fixtures. There are signals here that serve as a handshake with other robots regarding the status of this robot's operations
+
+
+MODULE Module1
+    CONST robtarget Target_10_2:=[[975.939443591,2543.473747735,709.21],[0.707106781,-0.707106781,0,0],[0,0,0,0],[0,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_10:=[[975.939443591,2675.541442713,709.21],[0.707106781,-0.707106781,0,0],[0,1,1,0],[0,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20:=[[2382.018320072,424.427178067,709.210071839],[0.612233028,-0.612233002,0.353794767,-0.353794762],[0,1,1,0],[-309,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40:=[[6151.432507568,424.427194095,709.21020647],[0.612233021,-0.612232955,0.353794805,-0.353794817],[0,1,1,0],[3460.414364641,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50_2:=[[4199.47892778,-2199.307332675,979.243350601],[0,0,-0.707106781,0.707106781],[-1,2,0,0],[3460.414364641,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50:=[[4199.47892778,-2595.897647285,979.243350601],[0,0,-0.707106781,0.707106781],[-1,2,0,0],[3460.414364641,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_60:=[[9835.178385452,424.427180572,709.210295267],[0.612232992,-0.612232972,0.353794819,-0.353794825],[0,1,1,0],[7144.160220994,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_70_2:=[[7965.616443591,2476.229042152,1339.573374926],[0.707106781,-0.707106781,0,0],[0,1,1,0],[7144.160220994,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_70:=[[7965.616443591,2686.032792285,1339.573374926],[0.707106781,-0.707106781,0,0],[0,1,1,0],[7144.160220994,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_100:=[[11462.881098163,424.427278012,709.210312955],[0.612232998,-0.612232979,0.353794808,-0.353794813],[0,1,1,0],[8771.862983704,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90_2:=[[11363.418232016,-2548.704449156,1047.474377203],[0,0,-0.707106781,0.707106781],[-1,2,0,0],[9628.546961326,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90:=[[11363.418232016,-2775.98665693,1047.474377203],[0,0,-0.707106781,0.707106781],[-1,2,0,0],[9628.546961326,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_110:=[[14889.617929828,424.427278012,709.210312955],[0.612232998,-0.612232979,0.353794808,-0.353794813],[0,1,1,0],[12198.599815369,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_120_2:=[[14491.838443591,2476.260355644,1337.890264102],[0.707106781,-0.707106781,0,0],[0,1,1,0],[12198.599815369,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_120:=[[14491.838443591,2609.40686596,1337.890264102],[0.707106781,-0.707106781,0,0],[0,1,1,0],[12198.599815369,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_130:=[[5294.747424695,424.427194095,709.21020647],[0.612233021,-0.612232955,0.353794805,-0.353794817],[0,1,1,0],[2603.729281768,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    !***********************************************************
+    !
+    ! Module:  Module1
+    !
+    ! Description:
+    !   <Insert description here>
+    !
+    ! Author: meetu
+    !
+    ! Version: 1.0
+    !
+    !***********************************************************
+    
+    
+    !***********************************************************
+    !
+    ! Procedure main
+    !
+    !   This is the entry point of your program
+    !
+    !***********************************************************
+    PROC main()
+        ! based on whether the sensors are occupied by an object, the RAPID program decides on what to do. 
+        VAR num count:=0;
+     !   VAR num sepsensor;
+       ! VAR num sthere;
+      !  VAR num cthere;
+      !  VAR num athere;
+        VAR num once:=0;
+        SetDO anpick,0;
+        SetDO Cathpick,0;
+        SetDO sepick,0;
+        WHILE TRUE DO
+            ! checked first since it is higher priority. 
+            IF once=0 THEN
+                Seppick;
+                CathodePick;
+                WaitDI ESensor,0;
+                
+                AnodePick;
+            ENDIF
+            once:=once+1;
+            !picksep=1 AND SepSensor=0 OR 
+            IF (picksep=1  AND SepSensor=0 AND Sthere=1)THEN
+                ! this condition does NOT work right away, because the sensor input signals only turn on briefly, and are event based NOT state based. THEREFORE I will create a new signal that I can set to 1 continuously as long as these are intersected
+                Seppick;
+                ! the pulse is used as a reset signal to the SRLatch, allows the Visinspect controller to reset its signal for the next round
+                WaitTime 0.1;
+                PulseDO T1sdone;
+            ENDIF
+            !pickath and pickan are only set to 1 when the sensor area is clear and the robot has in fact requested an electrode/separator to be loaded in
+            ! if ACLT1 receives a pick command for an eelctrode, the inspectiion station is vacant and there is an electrode available for picking
+            !OR (pickath=1 OR pickan=1 AND ESensor=0) 
+            IF pickath=1 OR pickan=1 AND ESensor=0 and cthere=1 OR athere=1 THEN
+                IF count=0 AND Cthere=1 THEN
+                    CathodePick;
+                    PulseDO T1edone;
+                    WaitTime 0.1;
+                    SetDO which,count;
+                    count:=1-count;
+                ELSEIF count=1 AND Athere=1 THEN
+                    AnodePick;
+                    PulseDO T1edone;
+                    WaitTime 0.1;
+                    SetDO which,count;
+                    count:=1-count;
+                ENDIF
+            ENDIF
+        ENDWHILE
+    ENDPROC
+    PROC Seppick()
+        WaitTime 0.5;
+        SetDO sepick,0;
+        WaitTime 0.5;
+        MoveL Target_10_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_10,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO sepick,1;
+        WaitTime 0.5;
+        MoveL Target_10_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_20,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_130,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_50_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_50,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO sepick,0;
+        WaitTime 0.5;
+        MoveL Target_50_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_130,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_40,v1000,fine,Tooldata_2\WObj:=wobj0;
+        PulseDO Sreset;
+    ENDPROC
+    PROC AnodePick()
+        MoveL Target_60,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_70_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_70,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO anpick,1;
+        WaitTime 0.5;
+        MoveL Target_70_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_60,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_100,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_90_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        MoveL Target_90,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO anpick,0;
+        WaitTime 0.5;
+        MoveL Target_90_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_100,v1000,fine,Tooldata_2\WObj:=wobj0;
+        PulseDO Areset;
+    ENDPROC
+    PROC CathodePick()
+        MoveL Target_110,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_120_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_120,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO cathpick,1;
+        WaitTime 0.5;
+        MoveL Target_120_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_110,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_90_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_90,v1000,fine,Tooldata_2\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO cathpick,0;
+        WaitTime 0.5;
+        MoveL Target_90_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_110,v1000,fine,Tooldata_2\WObj:=wobj0;
+        PulseDO Creset;
+    ENDPROC
+    PROC Path_10()
+        MoveL Target_10_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_10,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_10_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_20,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_130,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_50_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_50,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_50_2,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_130,v1000,fine,Tooldata_2\WObj:=wobj0;
+        MoveL Target_40,v1000,fine,Tooldata_2\WObj:=wobj0;
+    ENDPROC
+ENDMODULE
