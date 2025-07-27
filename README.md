@@ -4,7 +4,7 @@ Much of this GitHub branch covers the programs I wrote for simulations in my int
 
 While most simulations in the office are made non-iteratively, and therefore required significant repetitive effort, I chose to customise the structure of my RAPID programs by self-learning certain elements of RAPID syntax, in order to make my programs easier to write and navigate. With time and experimentation, I found, however, that non-iterative program structures lent us more control over the joint configuration the robot adopted at each target. I was therefore able to exercise significantly more discretion in choosing which method to use for simulation design. 
 
-One of the more valuable tasks I pursued in this internship, was the design of station logic. Below, I present and briefly explain the station logic for some salient stations. 
+One of the more valuable tasks I pursued in this internship, was the design of station logic. Below, I present and briefly explain the station logic for some salient stations. It is noteworthy that the station logics presented below as well as the RAPID programs in this GitHub branch were made purely on the basis of my independent experimentation with RAPID syntax and the available Smart Components in RobotStudio. 
 
 # Visual Inspection Station Logic
 <img width="1337" height="639" alt="Screenshot 2025-07-27 115501" src="https://github.com/user-attachments/assets/c334b20a-2d24-4a83-a945-18f126f4dc2f" />
