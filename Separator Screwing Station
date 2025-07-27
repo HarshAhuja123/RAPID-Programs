@@ -1,0 +1,205 @@
+! This program defined 2 custom functions for the screwing operation. screws() iterates through all 57 targets using a templatized FOR loop, and createoffset()
+! generates an approach point based on the known angle of the workpiece in the screwing station. This program with some small mathematical modifications, 
+! was applied to the robot on the other side. 
+! while mostly not problematic in simulation, this program revealed that configurational control reduces when iterative structures are used. In particular, 
+! RAPID automatically chooses and optimal configuration for each Move instruction only when they are declared non-iteratively. 
+! the introduction of an iterative structure prevents us from enforcing robot configurations to each target, increasing the risk of more convoluted, non-linear 
+! paths. 
+
+MODULE Module1
+    CONST robtarget Target_10:=[[670.8851765,-1361.027052076,420.329],[0.003971858,-0.729233587,-0.684243166,0.003726813],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_10_2:=[[670.8851765,-1361.027052076,450.329],[0.003971858,-0.729233587,-0.684243166,0.003726813],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    
+    CONST robtarget Target_20:=[[1822.198032559,825.569184126,1807.823815423],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_30:=[[1822.198032559,620.569184126,1807.823815423],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40:=[[1822.198032559,415.569184126,1807.823815423],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50:=[[1822.198032559,210.569184126,1807.823815423],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_60:=[[1843.035813705,14.069184126,1689.646885031],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_70:=[[1843.035813705,1022.069184126,1689.646885031],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_80:=[[1872.208707309,1175.569184126,1524.199182482],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90:=[[1872.208707309,912.569184126,1524.199182482],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_100:=[[1872.208707309,649.569184126,1524.199182482],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_110:=[[1872.208707309,386.569184126,1524.199182482],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_120:=[[1872.208707309,123.569184126,1524.199182482],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_130:=[[1872.208707309,-139.430815874,1524.199182482],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_140:=[[1902.770786323,-228.930815874,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_150:=[[1902.770786323,20.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_160:=[[1902.770786323,269.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_170:=[[1902.770786323,518.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_180:=[[1902.770786323,767.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_190:=[[1902.770786323,1016.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_200:=[[1902.770786323,1265.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_210:=[[1933.332865337,1310.069184126,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_220:=[[1933.332865337,1046.069184126,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_230:=[[1933.332865337,782.069184126,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_240:=[[1933.332865337,518.069184126,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_250:=[[1933.332865337,254.069184126,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_260:=[[1902.770786323,20.069184126,1350.873017907],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_270:=[[1933.332865337,-9.930815874,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_280:=[[1933.332865337,-273.930815874,1177.546853331],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_290:=[[1945.556828702,-273.930815874,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_300:=[[1945.556828702,-9.930815874,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_310:=[[1945.556828702,254.069184126,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_320:=[[1945.556828702,518.069184126,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_330:=[[1945.556828702,782.069184126,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_340:=[[1945.556828702,1046.069184126,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_350:=[[1945.556828702,1310.069184126,1108.22131154],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_360:=[[1985.443814779,1295.069184126,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_370:=[[1985.443814779,1036.069184126,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_380:=[[1985.443814779,777.069184126,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_390:=[[1985.443814779,518.069184126,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_400:=[[1985.443814779,259.069184126,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_410:=[[1985.443814779,0.069184126,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_420:=[[1985.443814779,-258.930815874,882.010970614],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_430:=[[2016.005893793,-204.930815874,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_440:=[[2016.005893793,36.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_450:=[[2016.005893793,277.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_460:=[[2016.005893793,518.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_470:=[[2016.005893793,759.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_480:=[[2016.005893793,1000.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_490:=[[2016.005893793,1241.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_500:=[[2045.178787397,1135.569184126,543.23710349],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_510:=[[2016.005893793,518.069184126,708.684806039],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_520:=[[2045.178787397,641.569184126,543.23710349],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_530:=[[2045.178787397,394.569184126,543.23710349],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_540:=[[2045.178787397,-99.430815874,543.23710349],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_550:=[[2066.016568543,18.069184126,425.060173098],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_560:=[[2066.016568543,268.069184126,425.060173098],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_570:=[[2066.016568543,518.069184126,425.060173098],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_580:=[[2066.016568543,758.069184126,425.060173098],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_590:=[[2066.016568543,998.069184126,425.060173098],[0.541675221,-0.454519477,0.454519477,-0.541675221],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    VAR robtarget targs{59}:=[Target_20,Target_30,Target_40,Target_50,Target_60,Target_70,Target_80,Target_90,Target_100,Target_110,Target_120,Target_130,Target_140,Target_150,
+        Target_160,Target_170,Target_180,Target_190,Target_200,Target_210,Target_220,Target_230,Target_240,Target_250,Target_260,Target_270,Target_280,Target_290,Target_300,Target_310,Target_320,Target_330,Target_340,Target_350,Target_360,Target_370,
+        Target_380,Target_390,Target_400,Target_410,Target_420,Target_420,Target_430,Target_440,Target_450,Target_460,Target_470,Target_480,Target_490,Target_500,Target_510,Target_520,Target_530,Target_540,Target_550,Target_560,Target_570,Target_580,Target_590];
+    VAR robtarget offset{59};
+    VAR speeddata sp1:=v7000;
+        !***********************************************************
+    !
+    ! Module:  Module1
+    !
+    ! Description:
+    !   <Insert description here>
+    !
+    ! Author: meetu
+    !
+    ! Version: 1.0
+    !
+    !***********************************************************
+    
+    
+    !***********************************************************
+    !
+    ! Procedure main
+    !
+    !   This is the entry point of your program
+    !
+    !***********************************************************
+    PROC screws()
+        FOR i FROM 1 TO Dim(targs,1) DO
+            WaitTime 0.1;
+            PulseDO PositionMale;
+            WaitTime 0.1;
+            MoveL Target_10_2,sp1,fine,Tooldata_1\WObj:=wobj0;
+            MoveL Target_10,sp1,fine,Tooldata_1\WObj:=wobj0;
+            SetDO MalePick,1;
+            WaitTime 0.1;
+            MoveL Target_10_2,sp1,fine,Tooldata_1\WObj:=wobj0;
+            MoveL offset{i},sp1,fine,Tooldata_1\WObj:=wobj0;
+            MoveL targs{i},sp1,fine,Tooldata_1\WObj:=wobj0;
+            WaitTime 0.1;
+            SetDO MalePick,0;
+            WaitTime 0.1;
+            MoveL offset{i},sp1,fine,Tooldata_1\WObj:=wobj0;
+            SetDO PositionMale,0;
+        ENDFOR
+    ENDPROC
+    PROC createoffset()
+        VAR robtarget temp;
+        FOR i FROM 1 TO DIM(targs,1) DO
+            temp:=targs{i};
+            temp.trans.x:=temp.trans.x-20*cos(10);
+            temp.trans.z:=temp.trans.z-20*sin(20);
+            offset{i}:=temp;
+        ENDFOR
+    ENDPROC
+    PROC main()
+        SetDO Proceed1,0;
+        WaitDI Start1,1;
+        IF Start1=1 THEN
+            createoffset;
+            screws;
+            MoveJ Target_10,sp1,fine,Tooldata_1\WObj:=wobj0;
+            WaitTime 0.1;
+            SetDO Proceed1,1;
+        ENDIF
+    ENDPROC
+    
+    
+    
+    PROC Path_30()
+        MoveL Target_20,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_30,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_40,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_50,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_60,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_70,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_80,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_90,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_100,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_110,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_130,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_140,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_150,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_160,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_170,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_180,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_190,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_200,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_210,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_220,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_230,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_240,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_250,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_260,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_270,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_280,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_290,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_300,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_310,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_320,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_330,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_340,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_350,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_360,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_370,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_380,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_390,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_400,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_410,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_420,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_430,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_440,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_450,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_460,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_470,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_480,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_490,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_500,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_510,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_520,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_530,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_540,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_550,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_560,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_570,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_580,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_590,v1000,z100,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_10()
+        SetDO PositionMale,1;
+        SetDO MalePick,1;
+        SetDO MalePick,0;
+        SetDO PositionMale,1;
+    ENDPROC
+ENDMODULE
