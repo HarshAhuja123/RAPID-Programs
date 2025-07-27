@@ -1,0 +1,1457 @@
+! The PROC IGNORE() and VAR robtarget anodes{57} was used for a previous version of this program. Mainly, this program has 57 independent paths to pick and place 
+! 57 screws into 57 individual holes for electrolyser assembly. As robot configurations were proving to be collision ridden on the way to many of these targets
+! I created 57 independent paths and auto-configured each of them through the Auto-configure option in RobotStudio. This approach rectified most problematic configurations
+! that creating a FOR loop would not allow, as for loops reduce our control over independent MoveL or MoveJ instructiions' configurations. 
+! The Cathode Screwing operation is logically identical to this program. 
+
+MODULE Module1
+    VAR robtarget anodes{57}:=[
+    [[1511.548752723,620.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1761.548752723,620.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2011.548752723,620.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2261.548752723,620.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2511.548752723,620.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2629.048752723,500.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2135.048752723,500.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1888.048752723,500.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1394.048752723,500.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1288.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1529.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1770.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2011.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2252.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2493.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2734.548752723,332.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2788.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2529.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2270.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2011.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1752.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1493.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1234.548752723,156.60993179,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1219.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1483.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1747.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2011.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2275.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2539.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2803.548752723,-19.39006821,751.817],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2799.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2535.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2271.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2007.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1743.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1479.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1215.827752723,-143.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1260.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1509.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1758.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2007.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2256.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2505.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2754.827752723,-319.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2665.327752723,-495.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2402.327752723,-495.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2139.327752723,-495.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1876.327752723,-495.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1613.327752723,-495.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1350.327752723,-495.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1503.827752723,-663.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2007.827752723,-663.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2511.827752723,-663.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2315.327752723,-783.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[2110.327752723,-783.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1905.327752723,-783.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]],
+    [[1700.327752723,-783.01006821,751.694],[0,0,1,0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]]];
+    CONST robtarget Target_10:=[[1386.459135247,620.247839913,1083.253732893],[0,-0.226473015,0.97401744,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget interim:=[[2349.094661687,-50.793505909,1353.170877753],[0,0.010303721,0.999946915,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_580:=[[1456.898202476,631.370752446,999.258512741],[0.000000006,-0.110251516,0.993903719,0.000000017],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_580_2:=[[1463.338655288,1007.802803409,999.258512741],[0.000000009,0.086244301,0.996274019,0.000000015],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Home:=[[1526.921653438,0,1341.581576862],[0.006665432,0,-0.999977786,0],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget home_3:=[[1536.54227246,-1319.881444487,1090.888131687],[0.002014734,0.394098152,0.919065744,-0.000863924],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget home_3_2:=[[1536.54227246,-1319.881444487,1297.750299844],[0.002029123,0.378424231,0.925629675,-0.000829564],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_10_4:=[[1386.459135247,620.247839913,1108.253732893],[0,-0.226473015,0.97401744,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20:=[[1634.66498736,620.247839913,1083.253732893],[0,-0.213012238,0.977049531,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20_4:=[[1634.66498736,620.247839913,1108.253732893],[0,-0.213012238,0.977049531,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_30:=[[1886.459135247,620.247839913,1083.253732893],[0,-0.20293164,0.979192907,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_30_4:=[[1886.459135247,620.247839913,1108.253732893],[0,-0.20293164,0.979192907,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40:=[[2136.459135247,620.247839913,1083.253732893],[0,-0.172268755,0.985049987,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40_4:=[[2136.459135247,620.247839913,1108.253732893],[0,-0.172268755,0.985049987,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50:=[[2386.459135247,620.247839913,1083.253732893],[0,-0.142327135,0.989819674,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50_4:=[[2386.459135247,620.247839913,1108.253732893],[0,-0.142327135,0.989819674,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_60:=[[2503.959135247,500.247839913,1083.253732893],[0,-0.109810554,0.993952535,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_60_4:=[[2503.959135247,500.247839913,1108.253732893],[0,-0.109810554,0.993952535,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_70:=[[2009.959135247,500.247839913,1083.253732893],[0,-0.156777667,0.987633922,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_70_4:=[[2009.959135247,500.247839913,1108.253732893],[0,-0.156777667,0.987633922,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_80:=[[1762.959135247,500.247839913,1083.253732893],[0,-0.1752383,0.984526048,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_80_4:=[[1762.959135247,500.247839913,1108.253732893],[0,-0.1752383,0.984526048,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90:=[[1268.959135247,500.247839913,1083.253732893],[0,-0.226051221,0.974115417,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90_4:=[[1268.959135247,500.247839913,1108.253732893],[0,-0.226051221,0.974115417,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_100:=[[1163.459135247,332.247839913,1083.253732893],[0,-0.183683069,0.982985519,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_100_4:=[[1163.459135247,332.247839913,1108.253732893],[0,-0.183683069,0.982985519,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_110:=[[1404.459135247,332.247839913,1083.253732893],[0,-0.153739498,0.988111414,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_110_4:=[[1404.459135247,332.247839913,1108.253732893],[0,-0.153739498,0.988111414,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_120:=[[1645.459135247,332.247839913,1083.253732893],[0,-0.104183518,0.99455809,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_120_4:=[[1645.459135247,332.247839913,1108.253732893],[0,-0.104183518,0.99455809,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_130:=[[1886.459135247,332.247839913,1083.253732893],[0,-0.095149396,0.995463004,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_130_4:=[[1886.459135247,332.247839913,1108.253732893],[0,-0.095149396,0.995463004,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_140:=[[2127.459135247,332.247839913,1083.253732893],[0,-0.102740601,0.994708183,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_140_4:=[[2127.459135247,332.247839913,1108.253732893],[0,-0.102740601,0.994708183,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_150:=[[2368.459135247,332.247839913,1083.253732893],[0,-0.083643243,0.996495764,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_150_4:=[[2368.459135247,332.247839913,1108.253732893],[0,-0.083643243,0.996495764,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_160:=[[2609.459135247,332.247839913,1083.253732893],[0,-0.088135197,0.996108522,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_160_4:=[[2609.459135247,332.247839913,1108.253732893],[0,-0.088135197,0.996108522,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_170:=[[2663.459135247,156.247839913,1083.253732893],[0,-0.049614559,0.998768439,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_170_4:=[[2663.459135247,156.247839913,1108.253732893],[0,-0.049614559,0.998768439,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_180:=[[2404.459135247,156.247839913,1083.253732893],[0,-0.048736432,0.998811674,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_180_4:=[[2404.459135247,156.247839913,1108.253732893],[0,-0.048736432,0.998811674,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_190:=[[2145.459135247,156.247839913,1083.253732893],[0,-0.025481683,0.999675289,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_190_4:=[[2145.459135247,156.247839913,1108.253732893],[0,-0.025481683,0.999675289,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_200:=[[1886.459135247,156.247839913,1083.253732893],[0,-0.023350163,0.999727348,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_200_4:=[[1886.459135247,156.247839913,1108.253732893],[0,-0.023350163,0.999727348,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_210:=[[1627.459135247,156.247839913,1083.253732893],[0,-0.030348536,0.999539377,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_210_4:=[[1627.459135247,156.247839913,1108.253732893],[0,-0.030348536,0.999539377,0],[0,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_220:=[[1368.459135247,156.247839913,1083.253732893],[0,-0.061395425,0.998113521,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_220_4:=[[1368.459135247,156.247839913,1108.253732893],[0,-0.061395425,0.998113521,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_230:=[[1109.459135247,156.247839913,1083.253732893],[0,-0.083437437,0.996513018,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_230_4:=[[1109.459135247,156.247839913,1108.253732893],[0,-0.083437437,0.996513018,0],[0,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_240:=[[1094.459135247,-19.752160087,1083.253732893],[0,0.007645975,0.999970769,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_240_4:=[[1094.459135247,-19.752160087,1108.253732893],[0,0.007645975,0.999970769,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_250:=[[1358.459135247,-19.752160087,1083.253732893],[0,-0.00902362,0.999959286,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_250_4:=[[1358.459135247,-19.752160087,1108.253732893],[0,-0.00902362,0.999959286,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_260:=[[1622.459135247,-19.752160087,1083.253732893],[0,0.001763518,0.999998445,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_260_4:=[[1622.459135247,-19.752160087,1108.253732893],[0,0.001763518,0.999998445,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_270:=[[1886.459135247,-19.752160087,1083.253732893],[0,0.006423613,0.999979368,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_270_4:=[[1886.459135247,-19.752160087,1108.253732893],[0,0.006423613,0.999979368,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_280:=[[2150.459135247,-19.752160087,1083.253732893],[0,0.015120449,0.999885679,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_280_4:=[[2150.459135247,-19.752160087,1108.253732893],[0,0.015120449,0.999885679,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_290:=[[2414.459135247,-19.752160087,1083.253732893],[0,-0.002090205,0.999997816,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_290_4:=[[2414.459135247,-19.752160087,1108.253732893],[0,-0.002090205,0.999997816,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_300:=[[2678.459135247,-19.752160087,1083.253732893],[0,0.015429988,0.999880951,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_300_4:=[[2678.459135247,-19.752160087,1108.253732893],[0,0.015429988,0.999880951,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_310:=[[2674.738135247,-143.372160087,1083.130732893],[0,0.032578936,0.999469166,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_310_4:=[[2674.738135247,-143.372160087,1108.130732893],[0,0.032578936,0.999469166,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_320:=[[2410.738135247,-143.372160087,1083.130732893],[0,0.020300718,0.999793919,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_320_4:=[[2410.738135247,-143.372160087,1108.130732893],[0,0.020300718,0.999793919,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_330:=[[2146.738135247,-143.372160087,1083.130732893],[0,0.044368528,0.999015232,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_330_4:=[[2146.738135247,-143.372160087,1108.130732893],[0,0.044368528,0.999015232,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_340:=[[1882.738135247,-143.372160087,1083.130732893],[0,0.043387349,0.999058326,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_340_4:=[[1882.738135247,-143.372160087,1108.130732893],[0,0.043387349,0.999058326,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_350:=[[1618.738135247,-143.372160087,1083.130732893],[0,0.059464459,0.998230423,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_350_4:=[[1618.738135247,-143.372160087,1108.130732893],[0,0.059464459,0.998230423,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_360:=[[1354.738135247,-143.372160087,1083.130732893],[0,0.064148237,0.997940381,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_360_4:=[[1354.738135247,-143.372160087,1108.130732893],[0,0.064148237,0.997940381,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_370:=[[1090.738135247,-143.372160087,1083.130732893],[0,0.076154946,0.997095995,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_370_4:=[[1090.738135247,-143.372160087,1108.130732893],[0,0.076154946,0.997095995,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_380:=[[1135.738135247,-319.372160087,1083.130732893],[0,0.155314882,0.987865015,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_380_4:=[[1135.738135247,-319.372160087,1108.130732893],[0,0.155314882,0.987865015,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_390:=[[1384.738135247,-319.372160087,1083.130732893],[0,0.132496738,0.991183441,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_390_4:=[[1384.738135247,-319.372160087,1108.130732893],[0,0.132496738,0.991183441,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_400:=[[1633.738135247,-319.372160087,1083.130732893],[0,0.105586486,0.994410124,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_400_4:=[[1633.738135247,-319.372160087,1108.130732893],[0,0.105586486,0.994410124,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_410:=[[1882.738135247,-319.372160087,1083.130732893],[0,0.068222643,0.997670121,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_410_4:=[[1882.738135247,-319.372160087,1108.130732893],[0,0.068222643,0.997670121,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_420:=[[2131.738135247,-319.372160087,1083.130732893],[0,0.06621709,0.99780524,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_420_4:=[[2131.738135247,-319.372160087,1108.130732893],[0,0.06621709,0.99780524,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_430:=[[2380.738135247,-319.372160087,1083.130732893],[0,0.052228484,0.998635161,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_430_4:=[[2380.738135247,-319.372160087,1108.130732893],[0,0.052228484,0.998635161,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_440:=[[2629.738135247,-319.372160087,1083.130732893],[0,0.0403711,0.999184755,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_440_4:=[[2629.738135247,-319.372160087,1108.130732893],[0,0.0403711,0.999184755,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_450:=[[2540.238135247,-495.372160087,1083.130732893],[0,0.092916166,0.995673936,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_450_4:=[[2540.238135247,-495.372160087,1108.130732893],[0,0.092916166,0.995673936,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_460:=[[2277.238135247,-495.372160087,1083.130732893],[0,0.128686938,0.991685269,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_460_4:=[[2277.238135247,-495.372160087,1108.130732893],[0,0.128686938,0.991685269,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_470:=[[2014.238135247,-495.372160087,1083.130732893],[0,0.155051266,0.987906425,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_470_4:=[[2014.238135247,-495.372160087,1108.130732893],[0,0.155051266,0.987906425,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_480:=[[1751.238135247,-495.372160087,1083.130732893],[0,0.139882157,0.990168159,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_480_4:=[[1751.238135247,-495.372160087,1108.130732893],[0,0.139882157,0.990168159,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_490:=[[1488.238135247,-495.372160087,1083.130732893],[0,0.191683954,0.981456704,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_490_4:=[[1488.238135247,-495.372160087,1108.130732893],[0,0.191683954,0.981456704,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_500:=[[1225.238135247,-495.372160087,1083.130732893],[0,0.223510389,0.974701547,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_500_4:=[[1225.238135247,-495.372160087,1108.130732893],[0,0.223510389,0.974701547,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_510:=[[1378.738135247,-663.372160087,1083.130732893],[0,0.244418837,0.969669754,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_510_4:=[[1378.738135247,-663.372160087,1108.130732893],[0,0.244418837,0.969669754,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_520:=[[1882.738135247,-663.372160087,1083.130732893],[0,0.203983922,0.978974238,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_520_4:=[[1882.738135247,-663.372160087,1108.130732893],[0,0.203983922,0.978974238,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_530:=[[2386.738135247,-663.372160087,1083.130732893],[0,0.127969098,0.991778156,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_530_4:=[[2386.738135247,-663.372160087,1108.130732893],[0,0.127969098,0.991778156,0],[-1,-3,2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_540:=[[2190.238135247,-783.372160087,1083.130732893],[0,0.188964511,0.981983917,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_540_4:=[[2190.238135247,-783.372160087,1108.130732893],[0,0.188964511,0.981983917,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_550:=[[1985.238135247,-783.372160087,1083.130732893],[0,0.201663217,0.979454923,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_550_4:=[[1985.238135247,-783.372160087,1108.130732893],[0,0.201663217,0.979454923,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_560:=[[1780.238135247,-783.372160087,1083.130732893],[0,0.21566897,0.976466536,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_560_4:=[[1780.238135247,-783.372160087,1108.130732893],[0,0.21566897,0.976466536,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_570:=[[1575.238135247,-783.372160087,1083.130732893],[0,0.265099959,0.964220935,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_570_4:=[[1575.238135247,-783.372160087,1108.130732893],[0,0.265099959,0.964220935,0],[-1,-2,1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    VAR speeddata sp:=v3000;
+    VAR num a:=0.1;
+    VAR num b:=0.1;
+    PROC Path_1()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_10_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_10,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_10_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_2()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_20_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_20,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_20_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_3()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_30_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_30,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_30_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_4()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_40_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_40,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_40_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_5()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_50_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_50,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_50_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_6()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_60_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_60,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_60_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_7()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_70_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_70,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_70_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;        
+    ENDPROC
+    PROC Path_8()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_80_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_80,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_80_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_9()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_90_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_90,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_90_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_10()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_100_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_100,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_100_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_11()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_110_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_110,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_110_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_12()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_120_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_13()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_120_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_14()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_140_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_140,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_140_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_15()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_150_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_150,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_150_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_16()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_160_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_160,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_160_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_17()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_170_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_170,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_170_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_18()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_180_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_180,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_180_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_19()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_190_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_190,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_190_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_20()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_200_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_200,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_200_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_21()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_210_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_210,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_210_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_22()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_220_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_220,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_220_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_23()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_230_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_230,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_230_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_24()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_240_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_240,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_240_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_25()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_250_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_250,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_250_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_26()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_260_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_260,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_260_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_27()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_270_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_270,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_270_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_28()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_280_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_280,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_280_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_29()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_290_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_290,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_290_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_30()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_300_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_300,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_300_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_31()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_310_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_310,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_310_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_32()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_320_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_320,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_320_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_33()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_330_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_330,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_330_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_34()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_340_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_340,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_340_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_35()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_350_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_350,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_350_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_36()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_360_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_360,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_360_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_37()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_370_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_370,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_370_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_38()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_380_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_380,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_380_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_39()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_390_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_390,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_390_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_40()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_400_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_400,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_400_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_41()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_410_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_410,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_410_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_42()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_420_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_420,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_420_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_43()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_430_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_430,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_430_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_44()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_440_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_440,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_440_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_45()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_450_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_450,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_450_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_46()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_460_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_460,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_460_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_47()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_470_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_470,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_470_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_48()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_480_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_480,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_480_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_49()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_490_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_490,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_490_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_50()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_500_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_500,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_500_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_51()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_510_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_510,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_510_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_52()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_520_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_520,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_520_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_53()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_530_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_530,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_530_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_54()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_540_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_540,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_540_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_55()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_550_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_550,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_550_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC    
+    PROC Path_56()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_560_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_560,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_560_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_57()
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        PulseDO screwposcath;
+        WaitTime a;
+        SetDO pick,1;
+        WaitTime a;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_570_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL Target_570,sp,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime a;
+        SetDO pick,0;
+        WaitTime b;
+        MoveL Target_570_4,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL interim, sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,sp,fine,Tooldata_1\WObj:=wobj0;
+        MoveL home_3,sp,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC main()
+        WaitDI Starting,1;
+        IF Starting=1 THEN
+            Path_1;
+            Path_2;
+            Path_3;
+            Path_4;
+            Path_5;
+            Path_6;
+            Path_7;
+            Path_8;
+            Path_9;
+            Path_10;
+            Path_11;
+            Path_12;
+            Path_13;
+            Path_14;
+            Path_15;
+            Path_16;
+            Path_17;
+            Path_18;
+            Path_19;
+            Path_20;
+            Path_21;
+            Path_22;
+            Path_23;
+            Path_24;
+            Path_25;
+            Path_26;
+            Path_27;
+            Path_28;
+            Path_29;
+            Path_30;
+            Path_31;
+            Path_32;
+            Path_33;
+            Path_34;
+            Path_35;
+            Path_36;
+            Path_37;
+            Path_38;
+            Path_39;
+            Path_40;
+            Path_41;
+            Path_42;
+            Path_43;
+            Path_44;
+            Path_45;
+            Path_46;
+            Path_47;
+            Path_48;
+            Path_49;
+            Path_50;
+            Path_51;
+            Path_52;
+            Path_53;
+            Path_54;
+            Path_55;
+            Path_56;    
+            Path_57;
+            WaitTime 0.1;
+            SetDO Take,1;
+            WaitTime 0.1;
+            SetDO Take,0;
+        ENDIF
+    ENDPROC
+    PROC IGNORE()
+        MoveL home_3,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL home_3_2,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL interim,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_10,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_10_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_20,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_20_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_30,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_30_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_40,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_40_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_50,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_50_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_60,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_60_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_70,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_70_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_80,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_80_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_90,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_90_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_100,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_100_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_110,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_110_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_120_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_130,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_130_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_140,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_140_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_150,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_150_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_160,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_160_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_170,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_170_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_180,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_180_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_190,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_190_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_200,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_200_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_210,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_210_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_220,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_220_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_230,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_230_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_240,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_240_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_250,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_250_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_260,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_260_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_270,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_270_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_280,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_280_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_290,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_290_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_300,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_300_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_310,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_310_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_320,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_320_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_330,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_330_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_340,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_340_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_350,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_350_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_360,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_360_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_370,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_370_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_380,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_380_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_390,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_390_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_400,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_400_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_410,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_410_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_420,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_420_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_430,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_430_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_440,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_440_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_450,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_450_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_460,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_460_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_470,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_470_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_480,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_480_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_490,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_490_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_500,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_500_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_510,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_510_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_520,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_520_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_530,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_530_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_540,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_540_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_550,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_550_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_560,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_560_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_570,v1000,z100,Tooldata_1\WObj:=wobj0;
+        MoveL Target_570_4,v1000,z100,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+ENDMODULE
