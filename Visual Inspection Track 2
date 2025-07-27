@@ -1,0 +1,178 @@
+! Second visual inspection robot, guided similarly to the Track 1 robot, but treating inputs from the visual inspection station sensors in the opposite way. 
+
+MODULE Module1
+    !***********************************************************
+    !
+    ! Module:  Module1
+    !
+    ! Description:
+    !   <Insert description here>
+    !
+    ! Author: meetu
+    !
+    ! Version: 1.0
+    !
+    !***********************************************************
+    
+    
+    !***********************************************************
+    !
+    ! Procedure main
+    !
+    !   This is the entry point of your program
+    !
+    !***********************************************************
+    VAR num count:=0;
+    CONST robtarget Target_10:=[[2713,0,2525],[0.5,0.5,0.5,0.5],[0,0,1,1],[0,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20:=[[7530.066298343,0,1966.100620813],[0.5,0.5,0.5,0.5],[0,2,3,0],[4817.066298343,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40:=[[6151.598058766,2871.12077895,979.243],[0.707106781,-0.707106781,0,0],[0,1,1,0],[4817.066298343,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40_2:=[[6151.598058766,2460.069096227,979.243],[0.707106781,-0.707106781,0,0],[0,1,1,0],[4817.066298343,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50:=[[2713.000078679,0,1877.041300431],[0.50000003,-0.49999997,0.499999992,-0.500000008],[-1,1,1,0],[0,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_60:=[[14493.780868227,-0.000011831,1966.101112578],[0.499999982,0.50000003,0.49999997,0.500000018],[0,2,2,0],[11780.780792236,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_80_2:=[[13315.538058766,2404.186412989,1006.821264681],[0.707106781,-0.707106781,0,0],[0,1,1,0],[11780.780792236,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_80:=[[13315.538058766,2828.883558403,1044.00850549],[0.707106781,-0.707106781,0,0],[0,1,1,0],[11780.780792236,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90_2:=[[0.000060875,-2247.007366952,1877.041018456],[-0.000000057,0.000000033,-0.70710675,0.707106813],[-1,-2,0,0],[0,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_90:=[[0.000060875,-2713.000071727,1877.041018456],[-0.000000057,0.000000033,-0.70710675,0.707106813],[-2,1,1,0],[0,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_100:=[[7433.348144577,-0.00001556,1966.101127424],[0.499999979,0.500000069,0.499999975,0.499999976],[0,2,2,0],[4720.348066298,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_110_2:=[[4720.348013599,-1780.796342462,1966.101127424],[0.70710675,0.707106813,-0.000000071,-0.000000007],[-2,2,2,0],[4720.348066298,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_110:=[[4720.348013599,-2713.000078278,1966.101127424],[0.70710675,0.707106813,-0.000000071,-0.000000007],[-2,2,2,0],[4720.348066298,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_120:=[[11882.38681861,-0.0000527,1966.101127424],[0.499999983,0.500000073,0.499999972,0.499999973],[-1,2,3,0],[9169.386740331,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_130_2:=[[9169.386687632,-2311.853475089,1966.101127424],[0.70710675,0.707106813,-0.000000071,-0.000000007],[-2,2,2,0],[9169.386740331,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_130:=[[9169.386687632,-2713.000078278,1966.101127424],[0.70710675,0.707106813,-0.000000071,-0.000000007],[-2,2,2,0],[9169.386740331,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    PROC main()
+        ! Simplest RAPID architecture, since only task is pick and place. 
+        VAR num adone:=0;
+        VAR num cdone:=0;
+        VAR num sdone:=0;
+        VAR num ecount:=0;
+        WaitTime 0.5;
+        PulseDO R3epdone;
+        WaitTime 0.5;
+        PulseDO R3spdone;
+        WaitTime 0.5;
+        PulseDO Ereset;
+        PulseDO Sreset;
+        WHILE TRUE DO
+            IF sepick=1 AND SepSensor=1 THEN
+                Separator;
+                sdone:=1;
+                !SetDO sepick,0;
+                PulseDO R3spdone;
+            ENDIF
+            ! placed first since the separator is always higher priority
+            IF epick=1 AND ESensor=1 THEN
+                IF count=0 THEN
+                    Cathode;
+                    cdone:=1;
+                ELSE
+                    Anode;
+                    adone:=1;
+                ENDIF
+                !SetDO epick,0;
+                ! signals cannot be set like this bilaterally, so some other handshake must be acknowledged--logicSR latches are used for this
+                PulseDO R3epdone;
+            ENDIF
+            IF  adone=1 AND cdone=1 AND sdone=1 THEN
+                PulseDO anpos;
+                adone:=0;
+                cdone:=0;
+                sdone:=0;
+            ENDIF
+            ! the idea here is that if the sensor in question is unoccupied, there is nothing to pick and so ACTL2 does not need to respond. 
+            ! Without the Sensor status known to this robot, it does not have enough information to determine whether or not it should re-execute a path or not
+        ENDWHILE
+    ENDPROC
+    PROC Elpick()
+        IF count=0 THEN
+            ! cathode pick path
+        ENDIF
+        IF count=1 THEN
+            ! anode pick path
+        ENDIF
+    ENDPROC
+    
+    PROC Path_10()
+        MoveJ Target_50,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_20,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_40_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_40,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_40_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Path_20()
+        MoveJ Target_60,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+    ENDPROC
+    PROC Separator()
+        WaitTime 1;
+        SetDO Seppick,0;
+        WaitTime 1;
+        MoveJ Target_50,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_20,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_40_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_40,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.1;
+        SetDO Seppick,1;
+        WaitTime 0.1;
+        MoveJ Target_40_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_20,v1000,fine,Tooldata_1\WObj:=wobj0;
+        PulseDO Sreset;
+        MoveJ Target_50,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_90_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_90,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.5;
+        SetDO Seppick,0;
+        WaitTime 0.5;
+        MoveJ Target_90_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.2;
+        PulseDO Seppos;
+    ENDPROC
+    PROC Anode()
+        WaitTime 1;
+        SetDO Apick,0;
+        WaitTime 1;
+        MoveJ Target_60,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.1;
+        SetDO Apick,1;
+        WaitTime 0.1;
+        MoveJ Target_80_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_60,v1000,fine,Tooldata_1\WObj:=wobj0;
+        PulseDO Ereset;
+        MoveJ Target_100,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_110_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_110,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.1;
+        SetDO Apick,0;
+        WaitTime 0.1;
+        MoveJ Target_110_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.2;
+        PulseDO Anpos;
+    ENDPROC
+    PROC Cathode()
+        WaitTime 1;
+        SetDO Cpick,0;
+        WaitTime 1;
+        MoveJ Target_60,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_80,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.1;
+        SetDO Cpick,1;
+        WaitTime 0.1;
+        MoveJ Target_80_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_60,v1000,fine,Tooldata_1\WObj:=wobj0;
+        PulseDO Ereset;
+        MoveJ Target_120,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_130_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        MoveJ Target_130,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.1;
+        SetDO Cpick,0;
+        WaitTime 0.1;
+        MoveJ Target_130_2,v1000,fine,Tooldata_1\WObj:=wobj0;
+        WaitTime 0.2;
+        PulseDO Cathpos;
+    ENDPROC
+    
+ENDMODULE
